@@ -8,10 +8,10 @@ A cutting-edge web application platform designed to enhance the modern traveler'
 ## Topics
 * [5 Minute Test](#5-minute-test)
 * [Features](#features)
-* [Getting Started](#getting-started)
-* [Angular Style Guide](https://angular.io/guide/styleguide)
-* [Voyage Best Practices](readme_docs/VOYAGE_STYLE_GUIDE.md)
-* [Development](readme_docs/DEVELOPMENT.md)
+* [Development server](#development_server)
+* [Code scaffolding](code_scaffolding)
+* [Building](Building)
+* [Additional Resources](Additional_Resources)
 
 ## 5 Minute Test
 To quickly get the application running for development or testing:
