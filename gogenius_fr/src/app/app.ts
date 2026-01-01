@@ -1,12 +1,12 @@
-import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
-  templateUrl: './app.html',
-  styleUrl: './app.scss'
+  templateUrl: './app.component.html'
 })
-export class App {
-  protected readonly title = signal('gogenius_fr');
+export class AppComponent implements OnInit {
+
+  constructor() { }
+
+  ngOnInit(): void { }
 }
