@@ -1,13 +1,13 @@
-import { throwError as observableThrowError, Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
-import { HttpEvent, HttpInterceptor, HttpHandler, HttpRequest } from '@angular/common/http';
+import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent } from '@angular/common/http';
+import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
 import { AuthenticationService } from './authentication.service';
 
 @Injectable()
 export class SecurityHttpInterceptor implements HttpInterceptor {
-  constructor(private authenticationService: AuthenticationService) { }
+  constructor(private authenticationService: AuthenticationService) {}
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     if (this.authenticationService.isAuthenticated()) {
@@ -19,20 +19,20 @@ export class SecurityHttpInterceptor implements HttpInterceptor {
       .pipe(
         catchError(errorResponse => {
           if (errorResponse.status !== 401) {
-            return observableThrowError(errorResponse);
+            return throwError(() => errorResponse);
           }
 
           const errors = errorResponse.error;
-          if (errors && errors instanceof Array) {
+          if (errors && Array.isArray(errors)) {
             const error = errors[0];
-            if (error.error === '401_verify_user') {
+            if (error?.error === '401_verify_user') {
               this.authenticationService.goToVerification();
-              return observableThrowError(errorResponse);
+              return throwError(() => errorResponse);
             }
           }
 
           this.authenticationService.logout();
-          return observableThrowError(errorResponse);
+          return throwError(() => errorResponse);
         })
       );
   }

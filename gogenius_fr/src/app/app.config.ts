@@ -1,11 +1,22 @@
 import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { provideRouter } from '@angular/router';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { SecurityHttpInterceptor } from './authentication/security-http-interceptor';
 
-import { routes } from './app.routes';
+import { appRoutes } from './app.routes';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
-    provideRouter(routes)
+    provideRouter(appRoutes),
+    provideHttpClient(withInterceptorsFromDi()),
+    provideAnimationsAsync(),
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: SecurityHttpInterceptor,
+      multi: true
+    }
   ]
 };
