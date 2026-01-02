@@ -7,9 +7,10 @@ import { VerificationComponent } from './verification/verification.component';
 import { PublicGuardService } from './public-guard.service';
 
 const authRoutes: Routes = [
-  { path: 'authentication/login', component: LoginComponent, canActivate: [PublicGuardService] },
-  { path: 'authentication/register', component: RegisterComponent, canActivate: [PublicGuardService] },
-  { path: 'authentication/verification', component: VerificationComponent }
+  { path: '', redirectTo: 'login', pathMatch: 'full' },
+  { path: 'login', component: LoginComponent, canActivate: [PublicGuardService] },
+  { path: 'register', component: RegisterComponent, canActivate: [PublicGuardService] },
+  { path: 'verification', component: VerificationComponent }
 ];
 
 @NgModule({

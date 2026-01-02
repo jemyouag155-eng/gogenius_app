@@ -9,13 +9,14 @@ import { MobileService } from '../../core/mobile.service';
 
 @Component({
   selector: 'app-register',
+  standalone: false,
   templateUrl: './register.component.html'
 })
 export class RegisterComponent implements OnInit, OnDestroy {
-  registerForm: FormGroup;
-  registrationErrors: Array<any>;
+  registerForm!: FormGroup;
+  registrationErrors: Array<any> = [];
   isMobile = false;
-  private watcher: Subscription;
+  private watcher!: Subscription;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -46,7 +47,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
     const register = this.registerForm.value as Register;
     this.registerService.register(register)
       .subscribe(result => {
-        this.snackBar.open('Registration successful', null, {
+        this.snackBar.open('Registration successful', undefined, {
           duration: 2000
         });
         this.router.navigate(['/authentication/login']);
@@ -55,6 +56,10 @@ export class RegisterComponent implements OnInit, OnDestroy {
 
   get phones(): FormArray {
     return this.registerForm.get('phones') as FormArray;
+  }
+
+  getPhoneGroup(index: number): FormGroup {
+    return this.phones.at(index) as FormGroup;
   }
 
   private initializeForm(): void {

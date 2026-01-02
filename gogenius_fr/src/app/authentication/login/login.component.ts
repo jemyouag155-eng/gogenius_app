@@ -1,57 +1,48 @@
-import { Component, OnInit, OnDestroy, Inject } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Subscription } from 'rxjs';
+import { Component, OnInit } from '@angular/core';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { LoginService } from './login.service';
+import { AuthenticationService } from '../authentication.service';
 import { Login } from './login.model';
-import { MobileService } from '../../core/mobile.service';
 
 @Component({
   selector: 'app-login',
+  standalone: false, // Si vous utilisez des modules
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
-export class LoginComponent implements OnInit, OnDestroy {
-  loginForm: FormGroup;
+export class LoginComponent implements OnInit {
+  loginForm!: FormGroup;
   loginFailed = false;
   isMobile = false;
-  private watcher: Subscription;
 
   constructor(
-    private loginService: LoginService,
     private formBuilder: FormBuilder,
-    @Inject('Window') private window: any,
-    private mobileService: MobileService) { }
+    private loginService: LoginService,
+    private authService: AuthenticationService,
+    private router: Router
+  ) {}
 
-  ngOnInit(): void {
-    this.initializeForm();
-    this.isMobile = this.mobileService.isMobile();
-    this.watcher = this.mobileService.mobileChanged$.subscribe((isMobile: boolean) => {
-      this.isMobile = isMobile;
-    });
-  }
-
-  ngOnDestroy(): void {
-    if (this.watcher && this.watcher.unsubscribe)
-    {
-      this.watcher.unsubscribe();
-    }
-  }
-
-  login(): void {
-    if (this.loginForm.invalid) {
-      return;
-    }
-    const login = this.loginForm.value as Login;
-    this.loginService.login(login)
-      .subscribe(result => {
-        this.window.location.reload();
-      }, error => this.loginFailed = true);
-  }
-
-  private initializeForm(): void {
+  ngOnInit() {
     this.loginForm = this.formBuilder.group({
       username: ['', Validators.required],
       password: ['', Validators.required]
     });
+  }
+
+  login() {
+    if (this.loginForm.valid) {
+      const credentials: Login = this.loginForm.value;
+      this.loginService.login(credentials).subscribe({
+        next: (response) => {
+          this.authService.setToken(response.token);
+          this.router.navigate(['/dashboard']);
+        },
+        error: (error) => {
+          this.loginFailed = true;
+          console.error('Login failed', error);
+        }
+      });
+    }
   }
 }

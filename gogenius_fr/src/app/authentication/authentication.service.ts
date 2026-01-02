@@ -1,8 +1,7 @@
 import { Injectable, Inject } from '@angular/core';
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
-// Remove environment import to fix module error
-// import { environment } from '../../environments/environment';
+import { environment } from '../../environments/environment';
 
 @Injectable()
 export class AuthenticationService {
@@ -13,7 +12,7 @@ export class AuthenticationService {
     private router: Router,
     @Inject('Window') private window: any) { }
 
-  getToken(): string {
+  getToken(): string | null {
     // Attempt to retrieve the token from session storage.
     let token = sessionStorage.getItem(this.sessionStorageTokenKey);
     // If not in session storage, attempt to get it from the URL.
@@ -50,10 +49,10 @@ export class AuthenticationService {
   }
 
   goToVerification(): void {
-    this.router.navigate(['authentication/verification']);
+    this.router.navigate(['/auth/verification']);
   }
 
-  private getTokenFromUrl(): string {
+  private getTokenFromUrl(): string | null {
     const tokenIndex = this.window.location.href.indexOf('access_token');
     if (tokenIndex === -1) {
       return null;

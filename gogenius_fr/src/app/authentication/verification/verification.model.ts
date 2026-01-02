@@ -1,3 +1,5 @@
 export class Verification {
-    code: string;
-  }
+  code: string = '';
+}
+
+export class VerificationModel extends Verification {}

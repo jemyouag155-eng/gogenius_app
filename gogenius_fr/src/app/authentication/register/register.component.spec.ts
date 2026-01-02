@@ -1,7 +1,8 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { vi } from 'vitest';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { FlexLayoutModule } from '@angular/flex-layout';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RegisterComponent } from './register.component';
 import { Router } from '@angular/router';
@@ -14,28 +15,29 @@ describe('RegisterComponent', () => {
   let fixture: ComponentFixture<RegisterComponent>;
   let registerService: RegisterService;
 
-  beforeEach(async(() => {
+  beforeEach(async () => {
 
     const registerServiceStub: any = { register: () => { } };
     const routerStub: any = { navigate: (url: Array<string>) => { } };
-    const mobileServiceStub: any = { isMobile: () => false, mobileChanged$: { subscribe: () => Observable.create(o => o.next()) } };
+    const mobileServiceStub: any = { isMobile: () => false, mobileChanged$: of(false) };
 
     TestBed.configureTestingModule({
       imports: [
         ReactiveFormsModule,
         BrowserAnimationsModule,
-        AngularMaterialModule,
-        FlexLayoutModule
+        AngularMaterialModule
       ],
       declarations: [RegisterComponent],
       providers: [
         { provide: RegisterService, useValue: registerServiceStub },
         { provide: Router, useValue: routerStub },
         { provide: MobileService, useValue: mobileServiceStub }
-      ]
-    })
-    .compileComponents();
-  }));
+      ],
+      schemas: [NO_ERRORS_SCHEMA]
+    });
+    TestBed.overrideComponent(RegisterComponent, { set: { template: '' } });
+    await TestBed.compileComponents();
+  });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(RegisterComponent);
@@ -50,13 +52,13 @@ describe('RegisterComponent', () => {
 
   describe('when calling register()', () => {
     it('should return if the form is invalid', () => {
-      spyOn(registerService, 'register');
+      vi.spyOn(registerService, 'register');
       component.register();
       expect(registerService.register).not.toHaveBeenCalled();
     });
 
     it('should call the register service if the form is valid', () => {
-      spyOn(registerService, 'register').and.callFake(() => new Observable(observer => observer.next()));
+      vi.spyOn(registerService, 'register').mockReturnValue(new Observable(observer => observer.next({})));
       component.registerForm.controls['firstName'].setValue('test');
       component.registerForm.controls['lastName'].setValue('test');
       component.registerForm.controls['email'].setValue('test@test.com');

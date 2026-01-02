@@ -1,4 +1,6 @@
 export class Login {
-    username: string;
-    password: string;
-  }
+  username: string = '';
+  password: string = '';
+}
+
+export class LoginModel extends Login {}

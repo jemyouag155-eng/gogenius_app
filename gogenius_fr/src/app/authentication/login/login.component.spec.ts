@@ -1,10 +1,13 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { FlexLayoutModule } from '@angular/flex-layout';
+/// <reference types="jasmine" />
+
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { vi } from 'vitest';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { LoginComponent } from './login.component';
 import { LoginService } from './login.service';
+import { AuthenticationService } from '../authentication.service';
 import { AngularMaterialModule } from '../../angular-material/angular-material.module';
 import { MobileService } from '../../core/mobile.service';
 
@@ -13,28 +16,28 @@ describe('LoginComponent', () => {
   let fixture: ComponentFixture<LoginComponent>;
   let loginService: LoginService;
 
-  beforeEach(async(() => {
+  beforeEach(async () => {
 
     const loginServiceStub: any = { login: () => { } };
     const windowStub: any = { location: { reload: () => { } } };
-    const mobileServiceStub: any = { isMobile: () => false, mobileChanged$: { subscribe: () => Observable.create(o => o.next()) } };
+    const mobileServiceStub: any = { isMobile: () => false, mobileChanged$: of(false) };
 
     TestBed.configureTestingModule({
       imports: [
-        BrowserAnimationsModule,
         AngularMaterialModule,
-        FlexLayoutModule,
         ReactiveFormsModule
       ],
       declarations: [LoginComponent],
       providers: [
         { provide: LoginService, useValue: loginServiceStub },
+        { provide: AuthenticationService, useValue: { isAuthenticated: () => false, setToken: vi.fn() } },
         { provide: 'Window', useValue: windowStub },
         { provide: MobileService, useValue: mobileServiceStub }
-      ]
-    })
-    .compileComponents();
-  }));
+      ],
+      schemas: [NO_ERRORS_SCHEMA]
+    });
+    await TestBed.compileComponents();
+  });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(LoginComponent);
@@ -50,7 +53,7 @@ describe('LoginComponent', () => {
   describe('when calling login()', () => {
 
     it('should return if the form is invalid', () => {
-      spyOn(loginService, 'login');
+      vi.spyOn(loginService, 'login');
       component.login();
       expect(loginService.login).not.toHaveBeenCalled();
     });
@@ -58,7 +61,7 @@ describe('LoginComponent', () => {
     it('should call the login service if the form is valid', () => {
       component.loginForm.controls['username'].setValue('username');
       component.loginForm.controls['password'].setValue('password');
-      spyOn(loginService, 'login').and.callFake(() => new Observable(o => o.next()));
+      vi.spyOn(loginService, 'login').mockReturnValue(of({}));
       component.login();
       expect(loginService.login).toHaveBeenCalled();
     });

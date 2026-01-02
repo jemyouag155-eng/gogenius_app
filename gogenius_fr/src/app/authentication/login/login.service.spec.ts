@@ -1,4 +1,5 @@
 import { TestBed, inject } from '@angular/core/testing';
+import { vi } from 'vitest';
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
@@ -10,7 +11,7 @@ import { AuthenticationService } from '../authentication.service';
 describe('LoginService', () => {
   beforeEach(() => {
 
-    const routerStub: any = { navigate: jasmine.createSpy('navigate') };
+    const routerStub: any = { navigate: vi.fn() };
     const locationStub: any = { replaceState: () => { } };
     const windowStub: any = { location: { reload: () => { } } };
 

@@ -1,7 +1,8 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { FlexLayoutModule } from '@angular/flex-layout';
-import { Observable } from 'rxjs';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { vi } from 'vitest';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import { Observable, of, throwError } from 'rxjs';
 import { ReactiveFormsModule } from '@angular/forms';
 import { VerificationComponent } from './verification.component';
 import { VerificationService } from './verification.service';
@@ -13,7 +14,7 @@ describe('VerificationComponent', () => {
   let fixture: ComponentFixture<VerificationComponent>;
   let verificationService: VerificationService;
 
-  beforeEach(async(() => {
+  beforeEach(async () => {
 
     const verificationServiceStub: any = {
       sendCode: () => { },
@@ -25,19 +26,19 @@ describe('VerificationComponent', () => {
     TestBed.configureTestingModule({
       imports: [
         ReactiveFormsModule,
-        BrowserAnimationsModule,
         AngularMaterialModule,
-        FlexLayoutModule,
         RouterTestingModule
       ],
       declarations: [VerificationComponent],
       providers: [
         { provide: VerificationService, useValue: verificationServiceStub },
-        { provide: 'Window', useValue: windowStub }
-      ]
-    })
-    .compileComponents();
-  }));
+        { provide: 'Window', useValue: windowStub },
+        provideAnimationsAsync()
+      ],
+      schemas: [NO_ERRORS_SCHEMA]
+    });
+    await TestBed.compileComponents();
+  });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(VerificationComponent);
@@ -52,8 +53,8 @@ describe('VerificationComponent', () => {
 
   describe('when calling sendCode()', () => {
     it('should call the verification service to send the code', () => {
-      spyOn(verificationService, 'sendCode').and.returnValue(Observable.create(o => o.next()));
-      component.sendCode();
+      vi.spyOn(verificationService, 'sendCode').mockReturnValue(of({}));
+      component.resendCode();
       expect(verificationService.sendCode).toHaveBeenCalled();
       expect(component.codeSent).toBe(true);
     });
@@ -61,22 +62,22 @@ describe('VerificationComponent', () => {
 
   describe('when calling verify()', () => {
     it('should return if the form is invalid', () => {
-      spyOn(verificationService, 'verify');
+      vi.spyOn(verificationService, 'verify');
       component.verify();
       expect(verificationService.verify).not.toHaveBeenCalled();
     });
 
     it('should set verificationFailed to true if service returns error', () => {
-      spyOn(verificationService, 'verify').and.returnValue(Observable.create(o => o.error()));
-      component.verificationForm.get('code').setValue('123456');
+      vi.spyOn(verificationService, 'verify').mockReturnValue(throwError(() => new Error('fail')));
+      component.verificationForm.get('code')!.setValue('123456');
       component.verify();
       expect(verificationService.verify).toHaveBeenCalled();
       expect(component.verificationFailed).toBe(true);
     });
 
     it('should call the verify service successfully if form is valid', () => {
-      spyOn(verificationService, 'verify').and.returnValue(Observable.create(o => o.next()));
-      component.verificationForm.get('code').setValue('123456');
+      vi.spyOn(verificationService, 'verify').mockReturnValue(of({}));
+      component.verificationForm.get('code')!.setValue('123456');
       component.verify();
       expect(verificationService.verify).toHaveBeenCalled();
       expect(component.verificationFailed).toBe(false);
