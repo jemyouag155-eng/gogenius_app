@@ -10,6 +10,7 @@ export const appConfig: ApplicationConfig = {
     provideRouter(appRoutes),
     provideHttpClient(withInterceptorsFromDi()),
     provideAnimationsAsync(),
+    { provide: 'Window', useValue: window },
     {
       provide: HTTP_INTERCEPTORS,
       useClass: SecurityHttpInterceptor,

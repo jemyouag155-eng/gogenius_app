@@ -6,7 +6,7 @@ import { Login } from './login.model';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { map } from 'rxjs/operators';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class LoginService {
 
   constructor(private http: HttpClient, private authService: AuthenticationService) { }

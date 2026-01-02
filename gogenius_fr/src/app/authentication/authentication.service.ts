@@ -3,7 +3,7 @@ import { Location } from '@angular/common';
 import { Router } from '@angular/router';
 import { environment } from '../../environments/environment';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class AuthenticationService {
   private sessionStorageTokenKey = 'gogenius.token';
 
