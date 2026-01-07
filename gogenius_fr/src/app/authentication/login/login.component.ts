@@ -12,37 +12,70 @@ import { Login } from './login.model';
   styleUrls: ['./login.component.scss']
 })
 export class LoginComponent implements OnInit {
-  loginForm!: FormGroup;
+  // loginForm!: FormGroup;
+  // loginFailed = false;
+  // isMobile = false;
+
+  // constructor(
+  //   private formBuilder: FormBuilder,
+  //   private loginService: LoginService,
+  //   private authService: AuthenticationService,
+  //   private router: Router
+  // ) {}
+
+  // ngOnInit() {
+  //   this.loginForm = this.formBuilder.group({
+  //     username: ['', Validators.required],
+  //     password: ['', Validators.required]
+  //   });
+  // }
+
+  // login() {
+  //   if (this.loginForm.valid) {
+  //     const credentials: Login = this.loginForm.value;
+  //     this.loginService.login(credentials).subscribe({
+  //       next: (response) => {
+  //         this.authService.setToken(response.token);
+  //         this.router.navigate(['/dashboard']);
+  //       },
+  //       error: (error) => {
+  //         this.loginFailed = true;
+  //         console.error('Login failed', error);
+  //       }
+  //     });
+  //   }
+  // }
+
+  loginForm: FormGroup;
   loginFailed = false;
   isMobile = false;
-
-  constructor(
-    private formBuilder: FormBuilder,
-    private loginService: LoginService,
-    private authService: AuthenticationService,
-    private router: Router
-  ) {}
-
-  ngOnInit() {
-    this.loginForm = this.formBuilder.group({
+  
+  constructor(private fb: FormBuilder) {
+    this.loginForm = this.fb.group({
       username: ['', Validators.required],
       password: ['', Validators.required]
     });
+    
+    this.checkScreenSize();
   }
-
+  
+  ngOnInit(): void {
+    this.checkScreenSize();
+  }
+  
+  checkScreenSize() {
+    this.isMobile = window.innerWidth < 768; // Bootstrap md breakpoint
+  }
+  
   login() {
     if (this.loginForm.valid) {
-      const credentials: Login = this.loginForm.value;
-      this.loginService.login(credentials).subscribe({
-        next: (response) => {
-          this.authService.setToken(response.token);
-          this.router.navigate(['/dashboard']);
-        },
-        error: (error) => {
-          this.loginFailed = true;
-          console.error('Login failed', error);
-        }
-      });
+      // Votre logique de connexion
+    } else {
+      this.loginForm.markAllAsTouched();
     }
+  }
+  
+  ngOnDestroy() {
+    // Nettoyage si nécessaire
   }
 }
