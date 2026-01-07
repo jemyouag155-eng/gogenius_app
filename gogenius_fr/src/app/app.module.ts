@@ -1,19 +1,13 @@
-import { bootstrapApplication } from '@angular/platform-browser';
+import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
+import { provideRouter } from '@angular/router';
 import { provideAnimations } from '@angular/platform-browser/animations';
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
-import { HammerModule } from '@angular/platform-browser';
-import { HTTP_INTERCEPTORS } from '@angular/common/http';
-import { AppComponent } from './app';
-import { SecurityHttpInterceptor } from './authentication/security-http-interceptor';
 
-bootstrapApplication(AppComponent, {
+import { routes } from './app.routes';
+
+export const appConfig: ApplicationConfig = {
   providers: [
-    provideAnimations(),
-    provideHttpClient(withInterceptorsFromDi()),
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: SecurityHttpInterceptor,
-      multi: true
-    }
+    provideZoneChangeDetection({ eventCoalescing: true }),
+    provideRouter(routes),
+    provideAnimations(), // ESSENTIEL pour Material
   ]
-}).catch(err => console.error(err));
+};

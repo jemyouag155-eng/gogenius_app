@@ -1,81 +1,79 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
-import { Router } from '@angular/router';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { RegisterService } from './register.service';
-import { Register } from './register.model';
-import { Subscription } from 'rxjs';
-import { MobileService } from '../../core/mobile.service';
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators, FormArray, ReactiveFormsModule } from '@angular/forms';
+import { Router, RouterLink } from '@angular/router';
+import { CommonModule } from '@angular/common';
+
+// Importez les modules Material nécessaires
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatSelectModule } from '@angular/material/select';
+import { MatOptionModule } from '@angular/material/core';
 
 @Component({
   selector: 'app-register',
-  standalone: false,
-  templateUrl: './register.component.html'
+  standalone: true,
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    RouterLink,
+    MatCardModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatIconModule,
+    MatSelectModule,
+    MatOptionModule,
+  ],
+  templateUrl: './register.component.html',
+  styleUrls: ['./register.component.scss']
 })
-export class RegisterComponent implements OnInit, OnDestroy {
-  registerForm!: FormGroup;
-  registrationErrors: Array<any> = [];
-  isMobile = false;
-  private watcher!: Subscription;
+export class RegisterComponent implements OnInit {
+  registerForm: FormGroup;
 
-  constructor(
-    private formBuilder: FormBuilder,
-    private registerService: RegisterService,
-    private router: Router,
-    private snackBar: MatSnackBar,
-    private mobileService: MobileService) { }
-
-  ngOnInit(): void {
-    this.initializeForm();
-    this.isMobile = this.mobileService.isMobile();
-    this.watcher = this.mobileService.mobileChanged$.subscribe((isMobile: boolean) => {
-      this.isMobile = isMobile;
+  constructor(private fb: FormBuilder, private router: Router) {
+    this.registerForm = this.fb.group({
+      email: ['', [Validators.required, Validators.email]],
+      firstName: ['', Validators.required],
+      lastName: ['', Validators.required],
+      phones: this.fb.array([]),
+      username: ['', [Validators.required, Validators.minLength(3)]],
+      password: ['', [Validators.required, Validators.minLength(6)]],
+      confirmPassword: ['', Validators.required]
     });
   }
 
-  ngOnDestroy(): void {
-    if (this.watcher && this.watcher.unsubscribe)
-    {
-      this.watcher.unsubscribe();
-    }
+  ngOnInit(): void {
+    this.addPhone();
   }
 
-  register(): void {
-    if (this.registerForm.invalid) {
-      return;
-    }
-    const register = this.registerForm.value as Register;
-    this.registerService.register(register)
-      .subscribe(result => {
-        this.snackBar.open('Registration successful', undefined, {
-          duration: 2000
-        });
-        this.router.navigate(['/authentication/login']);
-      }, errors => this.registrationErrors = errors);
-  }
-
-  get phones(): FormArray {
+  get phones() {
     return this.registerForm.get('phones') as FormArray;
   }
 
-  getPhoneGroup(index: number): FormGroup {
+  addPhone() {
+    const phoneGroup = this.fb.group({
+      phoneNumber: ['', Validators.required],
+      phoneType: ['Mobile', Validators.required]
+    });
+    this.phones.push(phoneGroup);
+  }
+
+  removePhone(index: number) {
+    this.phones.removeAt(index);
+  }
+
+  getPhoneGroup(index: number) {
     return this.phones.at(index) as FormGroup;
   }
 
-  private initializeForm(): void {
-    this.registerForm = this.formBuilder.group({
-      firstName: ['', Validators.required],
-      lastName: ['', Validators.required],
-      email: ['', Validators.required],
-      username: ['', Validators.required],
-      password: ['', Validators.required],
-      confirmPassword: ['', Validators.required],
-      phones: this.formBuilder.array([
-        this.formBuilder.group({
-          phoneNumber: ['', Validators.required],
-          phoneType: [null, Validators.required]
-        })
-      ])
-    });
+  register() {
+    if (this.registerForm.valid) {
+      // Logique d'inscription
+      console.log(this.registerForm.value);
+      this.router.navigate(['/login']);
+    }
   }
 }

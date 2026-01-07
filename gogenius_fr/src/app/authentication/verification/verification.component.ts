@@ -1,59 +1,44 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { VerificationService } from './verification.service';
+import { CommonModule } from '@angular/common';
+
+// Importez les modules Material nécessaires
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-verification',
-  standalone: false,
+  standalone: true,
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MatCardModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+  ],
   templateUrl: './verification.component.html',
   styleUrls: ['./verification.component.scss']
 })
 export class VerificationComponent implements OnInit {
-  verificationForm!: FormGroup;
-  codeSent = false;
-  verificationFailed = false;
+  verificationForm: FormGroup;
 
-  constructor(
-    private formBuilder: FormBuilder,
-    private verificationService: VerificationService,
-    private router: Router
-  ) {}
-
-  ngOnInit() {
-    this.verificationForm = this.formBuilder.group({
-      code: ['', Validators.required]
+  constructor(private fb: FormBuilder, private router: Router) {
+    this.verificationForm = this.fb.group({
+      code: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(6)]]
     });
   }
+
+  ngOnInit(): void {}
 
   verify() {
     if (this.verificationForm.valid) {
-      const code = this.verificationForm.value.code;
-      this.verificationService.verify(code).subscribe({
-        next: (response) => {
-          this.router.navigate(['/dashboard']);
-        },
-        error: (error) => {
-          this.verificationFailed = true;
-          console.error('Verification failed', error);
-        }
-      });
+      // Logique de vérification
+      console.log(this.verificationForm.value);
+      this.router.navigate(['/dashboard']);
     }
-  }
-
-  resendCode() {
-    this.verificationService.sendCode().subscribe({
-      next: () => {
-        this.codeSent = true;
-      },
-      error: (error) => {
-        console.error('Failed to resend code', error);
-      }
-    });
-  }
-
-  // Alias to match template's click handler
-  sendCode() {
-    this.resendCode();
   }
 }

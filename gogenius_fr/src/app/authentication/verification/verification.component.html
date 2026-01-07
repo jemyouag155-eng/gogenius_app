@@ -1,43 +1,84 @@
-<div class="masthead">
-    <div fxLayout="row" fxLayoutAlign="center center" class="full-height">
-      <mat-card fxFlex="50" fxFlex.md="60" fxFlex.sm="95" fxFlex.xs="100" *ngIf="!codeSent">
-        <mat-card-title>Two-Factor Authentication</mat-card-title>
-        <mat-card-content>
-          Your account requires verification. A message with a verification code will be sent to your phone.
-          Click the "Send Code" button to continue.
-        </mat-card-content>
-        <mat-card-actions>
-          <div fxLayout="column" class="action-buttons">
-            <button mat-raised-button color="primary" (click)="sendCode()">
-              Send Code
-            </button>
-          </div>
-        </mat-card-actions>
-      </mat-card>
-  
-      <mat-card fxFlex="50" fxFlex.md="60" fxFlex.sm="95" fxFlex.xs="100" *ngIf="codeSent">
-        <mat-card-title>Two-Factor Authentication</mat-card-title>
-        <mat-card-content>
-          A message with a verification code has been sent to your phone. Enter the code to continue.
-        </mat-card-content>
-        <form [formGroup]="verificationForm" (ngSubmit)="verify()" novalidate>
-          <div fxLayout="column">
-            <mat-form-field fxFlex>
-              <input matInput placeholder="Code" formControlName="code" required>
-              <mat-error *ngIf="verificationForm.controls['code'].hasError('required')">
-                Code is required
-              </mat-error>
-            </mat-form-field>
-            <div fxLayout="column" class="action-buttons">
-              <button mat-raised-button color="primary" type="submit" [disabled]="verificationForm.invalid">
-                Verify
+<!-- Version Desktop -->
+<div class="vh-100 d-none d-md-flex">
+  <div class="container h-100">
+    <div class="row justify-content-center align-items-center h-100">
+      <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+        <mat-card class="shadow-lg">
+          <mat-card-header class="mb-3">
+            <mat-card-title class="text-center w-100">Vérification à deux facteurs</mat-card-title>
+          </mat-card-header>
+          
+          <mat-card-content class="p-4">
+            <p class="text-center text-muted mb-4">
+              Entrez le code à 6 chiffres envoyé à votre adresse email.
+            </p>
+
+            <form [formGroup]="verificationForm" (ngSubmit)="verify()">
+              <mat-form-field appearance="outline" class="w-100 mb-4">
+                <mat-label>Code de vérification</mat-label>
+                <input matInput formControlName="code" maxlength="6" required>
+                <mat-error *ngIf="verificationForm.get('code')?.hasError('required')">
+                  Code requis
+                </mat-error>
+                <mat-error *ngIf="verificationForm.get('code')?.hasError('minlength') || verificationForm.get('code')?.hasError('maxlength')">
+                  Code à 6 chiffres requis
+                </mat-error>
+              </mat-form-field>
+
+              <div class="d-grid">
+                <button type="submit" mat-raised-button color="primary" class="py-2">
+                  VÉRIFIER
+                </button>
+              </div>
+            </form>
+          </mat-card-content>
+
+          <mat-card-actions class="p-4 pt-0">
+            <div class="text-center">
+              <button mat-button color="accent" class="w-100">
+                Renvoyer le code
               </button>
             </div>
-            <div fxLayout="row" *ngIf="verificationFailed" class="error">
-              Invalid code entered. Try again.
-            </div>
-          </div>
-        </form>
-      </mat-card>
+          </mat-card-actions>
+        </mat-card>
+      </div>
     </div>
   </div>
+</div>
+
+<!-- Version Mobile -->
+<div class="vh-100 d-md-none">
+  <div class="container h-100">
+    <div class="row justify-content-center align-items-center h-100">
+      <div class="col-11">
+        <div class="p-4">
+          <div class="text-center mb-5">
+            <h1 class="text-white mb-3">Vérification</h1>
+            <p class="text-white-50">
+              Entrez le code à 6 chiffres
+            </p>
+          </div>
+
+          <form [formGroup]="verificationForm" (ngSubmit)="verify()">
+            <mat-form-field appearance="fill" class="w-100 mb-4">
+              <mat-label class="text-white">Code de vérification</mat-label>
+              <input matInput formControlName="code" maxlength="6" required>
+            </mat-form-field>
+
+            <div class="d-grid mb-3">
+              <button type="submit" mat-raised-button color="primary" class="py-3">
+                VÉRIFIER
+              </button>
+            </div>
+
+            <div class="text-center">
+              <button mat-button color="accent" class="w-100 text-white">
+                Renvoyer le code
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

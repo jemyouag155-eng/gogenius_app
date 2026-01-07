@@ -1,152 +1,194 @@
-<div class="masthead" *ngIf="!isMobile">
-    <div fxLayout="row" fxLayoutAlign="center center" class="full-height">
-      <mat-card fxFlex.md="80" fxFlex.lg="60" fxFlex.xl="50">
-        <h1>Gogenius FR</h1>
-        <div>Create Account</div>
-        <form [formGroup]="registerForm" (ngSubmit)="register()" novalidate fxLayout="column" fxLayoutGap="5px">
-          <mat-form-field>
-            <input matInput placeholder="Email" formControlName="email" required>
-            <mat-error *ngIf="registerForm.controls['email'].hasError('required')">
-              Email is required
-            </mat-error>
-          </mat-form-field>
-          <mat-form-field>
-            <input matInput placeholder="First Name" formControlName="firstName" required>
-            <mat-error *ngIf="registerForm.controls['firstName'].hasError('required')">
-              First Name is required
-            </mat-error>
-          </mat-form-field>
-          <mat-form-field>
-            <input matInput placeholder="Last Name" formControlName="lastName" required>
-            <mat-error *ngIf="registerForm.controls['lastName'].hasError('required')">
-              Last Name is required
-            </mat-error>
-          </mat-form-field>
-          <div formArrayName="phones">
-            <div *ngFor="let phone of phones.controls; let i=index" [formGroupName]="i" fxLayout="row">
-              <mat-form-field fxFlex="60">
-                <input matInput placeholder="Phone" formControlName="phoneNumber" required>
-                <mat-error *ngIf="getPhoneGroup(i).controls['phoneNumber'].hasError('required')">
-                  Phone is required
-                </mat-error>
-              </mat-form-field>
-              <mat-form-field fxFlex>
-                <mat-select placeholder="Type" formControlName="phoneType" required>
-                  <mat-option value="Mobile">Mobile</mat-option>
-                  <mat-option value="Office">Office</mat-option>
-                  <mat-option value="Home">Home</mat-option>
-                  <mat-option value="Other">Other</mat-option>
-                </mat-select>
-                <mat-error *ngIf="getPhoneGroup(i).controls['phoneType'].hasError('required')">
-                  Type is required
-                </mat-error>
-              </mat-form-field>
+<!-- Version Desktop -->
+<div class="vh-100 d-none d-md-flex">
+  <div class="container h-100">
+    <div class="row justify-content-center align-items-center h-100">
+      <div class="col-12 col-lg-8 col-xl-6">
+        <mat-card class="shadow-lg">
+          <mat-card-content class="p-4 p-md-5">
+            <div class="text-center mb-4">
+              <h1 class="h2 mb-3">Inscription</h1>
             </div>
-          </div>
-          <mat-form-field>
-            <input matInput placeholder="Username" formControlName="username" required>
-            <mat-error *ngIf="registerForm.controls['username'].hasError('required')">
-              Username is required
-            </mat-error>
-          </mat-form-field>
-          <mat-form-field>
-            <input matInput placeholder="Password" formControlName="password" type="password" required>
-            <mat-error *ngIf="registerForm.controls['password'].hasError('required')">
-              Password is required
-            </mat-error>
-          </mat-form-field>
-          <mat-form-field>
-            <input matInput placeholder="Confirm Password" formControlName="confirmPassword" type="password" required>
-            <mat-error *ngIf="registerForm.controls['confirmPassword'].hasError('required')">
-              Confirm Password is required
-            </mat-error>
-          </mat-form-field>
-          <div *ngIf="registrationErrors.length > 0">
-            <span *ngFor="let error of registrationErrors" class="error">
-              {{error.errorDescription}}
-              <br />
-            </span>
-          </div>
-          <div fxLayout="column" fxLayoutGap="10px">
-            <button mat-raised-button color="primary" type="submit">Register</button>
-            <button type="button" routerLink="login" color="accent" mat-raised-button>Cancel</button>
-          </div>
-        </form>
-      </mat-card>
+
+            <form [formGroup]="registerForm" (ngSubmit)="register()">
+              <!-- Email -->
+              <div class="row mb-3">
+                <div class="col-12">
+                  <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Email</mat-label>
+                    <input matInput formControlName="email" type="email" required>
+                    <mat-error *ngIf="registerForm.get('email')?.hasError('required')">
+                      Email requis
+                    </mat-error>
+                    <mat-error *ngIf="registerForm.get('email')?.hasError('email')">
+                      Format email invalide
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+              </div>
+
+              <!-- Prénom et Nom -->
+              <div class="row mb-3">
+                <div class="col-md-6 mb-3 mb-md-0">
+                  <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Prénom</mat-label>
+                    <input matInput formControlName="firstName" required>
+                    <mat-error *ngIf="registerForm.get('firstName')?.hasError('required')">
+                      Prénom requis
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+                <div class="col-md-6">
+                  <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Nom</mat-label>
+                    <input matInput formControlName="lastName" required>
+                    <mat-error *ngIf="registerForm.get('lastName')?.hasError('required')">
+                      Nom requis
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+              </div>
+
+              <!-- Téléphones -->
+              <div class="mb-3" formArrayName="phones">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                  <label class="form-label">Téléphones</label>
+                  <button type="button" mat-button (click)="addPhone()">
+                    <mat-icon>add</mat-icon> Ajouter
+                  </button>
+                </div>
+                
+                <div *ngFor="let phone of phones.controls; let i = index" [formGroupName]="i" class="row mb-3">
+                  <div class="col-md-6 mb-2 mb-md-0">
+                    <mat-form-field appearance="outline" class="w-100">
+                      <mat-label>Numéro</mat-label>
+                      <input matInput formControlName="phoneNumber" required>
+                      <mat-error *ngIf="getPhoneGroup(i).get('phoneNumber')?.hasError('required')">
+                        Numéro requis
+                      </mat-error>
+                    </mat-form-field>
+                  </div>
+                  <div class="col-md-4 mb-2 mb-md-0">
+                    <mat-form-field appearance="outline" class="w-100">
+                      <mat-label>Type</mat-label>
+                      <mat-select formControlName="phoneType" required>
+                        <mat-option value="Mobile">Mobile</mat-option>
+                        <mat-option value="Office">Bureau</mat-option>
+                        <mat-option value="Home">Domicile</mat-option>
+                        <mat-option value="Other">Autre</mat-option>
+                      </mat-select>
+                    </mat-form-field>
+                  </div>
+                  <div class="col-md-2 d-flex align-items-center">
+                    <button *ngIf="phones.length > 1" type="button" mat-icon-button color="warn" (click)="removePhone(i)">
+                      <mat-icon>delete</mat-icon>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Username -->
+              <div class="mb-3">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>Nom d'utilisateur</mat-label>
+                  <input matInput formControlName="username" required>
+                  <mat-error *ngIf="registerForm.get('username')?.hasError('required')">
+                    Nom d'utilisateur requis
+                  </mat-error>
+                  <mat-error *ngIf="registerForm.get('username')?.hasError('minlength')">
+                    Minimum 3 caractères
+                  </mat-error>
+                </mat-form-field>
+              </div>
+
+              <!-- Mot de passe -->
+              <div class="row mb-3">
+                <div class="col-md-6 mb-3 mb-md-0">
+                  <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Mot de passe</mat-label>
+                    <input matInput type="password" formControlName="password" required>
+                    <mat-error *ngIf="registerForm.get('password')?.hasError('required')">
+                      Mot de passe requis
+                    </mat-error>
+                    <mat-error *ngIf="registerForm.get('password')?.hasError('minlength')">
+                      Minimum 6 caractères
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+                <div class="col-md-6">
+                  <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Confirmer mot de passe</mat-label>
+                    <input matInput type="password" formControlName="confirmPassword" required>
+                    <mat-error *ngIf="registerForm.get('confirmPassword')?.hasError('required')">
+                      Confirmation requise
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+              </div>
+
+              <!-- Bouton d'inscription -->
+              <div class="d-grid mt-4">
+                <button type="submit" mat-raised-button color="primary" class="py-2">
+                  S'INSCRIRE
+                </button>
+              </div>
+
+              <!-- Lien vers login -->
+              <div class="text-center mt-3">
+                <span class="text-muted">
+                  Déjà un compte ? 
+                  <a routerLink="/login" class="ms-1">Se connecter</a>
+                </span>
+              </div>
+            </form>
+          </mat-card-content>
+        </mat-card>
+      </div>
     </div>
   </div>
-  
-  <!-- Mobile -->
-  <div class="masthead-mobile" *ngIf="isMobile">
-    <div fxLayout="column" fxLayoutGap="30px" class="form-container">
-      <div class="white">Create Account</div>
-      <form [formGroup]="registerForm" (ngSubmit)="register()" novalidate fxLayout="column" fxLayoutGap="5px">
-        <mat-form-field class="light-input">
-          <input matInput placeholder="Email" formControlName="email" required>
-          <mat-error *ngIf="registerForm.controls['email'].hasError('required')">
-            Email is required
-          </mat-error>
-        </mat-form-field>
-        <mat-form-field class="light-input">
-          <input matInput placeholder="First Name" formControlName="firstName" required>
-          <mat-error *ngIf="registerForm.controls['firstName'].hasError('required')">
-            First Name is required
-          </mat-error>
-        </mat-form-field>
-        <mat-form-field class="light-input">
-          <input matInput placeholder="Last Name" formControlName="lastName" required>
-          <mat-error *ngIf="registerForm.controls['lastName'].hasError('required')">
-            Last Name is required
-          </mat-error>
-        </mat-form-field>
-        <div formArrayName="phones">
-          <div *ngFor="let phone of phones.controls; let i=index" [formGroupName]="i" fxLayout="row">
-            <mat-form-field fxFlex="60" class="light-input">
-              <input matInput placeholder="Phone" formControlName="phoneNumber" required>
-              <mat-error *ngIf="getPhoneGroup(i).controls['phoneNumber'].hasError('required')">
-                Phone and Type are required
-              </mat-error>
-            </mat-form-field>
-            <mat-form-field class="light-input" fxFlex>
-              <mat-select placeholder="Type" formControlName="phoneType" required>
-                <mat-option value="Mobile">Mobile</mat-option>
-                <mat-option value="Office">Office</mat-option>
-                <mat-option value="Home">Home</mat-option>
-                <mat-option value="Other">Other</mat-option>
-              </mat-select>
-            </mat-form-field>
+</div>
+
+<!-- Version Mobile (simplifiée) -->
+<div class="vh-100 d-md-none">
+  <div class="container h-100">
+    <div class="row justify-content-center align-items-center h-100">
+      <div class="col-11">
+        <div class="p-4">
+          <div class="text-center mb-4">
+            <h1 class="text-white mb-3">Inscription</h1>
           </div>
+          
+          <form [formGroup]="registerForm" (ngSubmit)="register()">
+            <!-- Formulaire simplifié pour mobile -->
+            <mat-form-field appearance="fill" class="w-100 mb-3">
+              <mat-label>Email</mat-label>
+              <input matInput formControlName="email" type="email" required>
+            </mat-form-field>
+
+            <mat-form-field appearance="fill" class="w-100 mb-3">
+              <mat-label>Nom d'utilisateur</mat-label>
+              <input matInput formControlName="username" required>
+            </mat-form-field>
+
+            <mat-form-field appearance="fill" class="w-100 mb-3">
+              <mat-label>Mot de passe</mat-label>
+              <input matInput type="password" formControlName="password" required>
+            </mat-form-field>
+
+            <div class="d-grid mt-4">
+              <button type="submit" mat-raised-button color="primary" class="py-3">
+                S'INSCRIRE
+              </button>
+            </div>
+
+            <div class="text-center mt-3">
+              <span class="text-white">
+                Déjà un compte ? 
+                <a routerLink="/login" class="text-white ms-1">Se connecter</a>
+              </span>
+            </div>
+          </form>
         </div>
-        <mat-form-field class="light-input">
-          <input matInput placeholder="Username" formControlName="username" required>
-          <mat-error *ngIf="registerForm.controls['username'].hasError('required')">
-            Username is required
-          </mat-error>
-        </mat-form-field>
-        <mat-form-field class="light-input">
-          <input matInput placeholder="Password" formControlName="password" type="password" required>
-          <mat-error *ngIf="registerForm.controls['password'].hasError('required')">
-            Password is required
-          </mat-error>
-        </mat-form-field>
-        <mat-form-field class="light-input">
-          <input matInput placeholder="Confirm Password" formControlName="confirmPassword" type="password" required>
-          <mat-error *ngIf="registerForm.controls['confirmPassword'].hasError('required')">
-            Confirm Password is required
-          </mat-error>
-        </mat-form-field>
-        <div *ngIf="registrationErrors.length > 0">
-          <span *ngFor="let error of registrationErrors" class="white">
-            {{error.errorDescription}}
-            <br />
-          </span>
-        </div>
-        <div fxLayout="column" fxLayoutGap="10px">
-          <button mat-raised-button color="primary" type="submit">Register</button>
-          <button type="button" routerLink="login" mat-raised-button class="cancel-button">
-            Cancel
-          </button>
-        </div>
-      </form>
+      </div>
     </div>
   </div>
+</div>

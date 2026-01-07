@@ -1,29 +1,29 @@
-.form-container {
-    width: 100%;
-    padding: 20px;
+/* login.component.scss */
+.masthead {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.masthead-mobile {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+/* Pour les champs Material sur fond sombre (version mobile) */
+:host ::ng-deep {
+  .masthead-mobile {
+    .mat-mdc-text-field-wrapper {
+      background-color: rgba(255, 255, 255, 0.1) !important;
+    }
+    
+    .mat-mdc-form-field-label {
+      color: rgba(255, 255, 255, 0.7) !important;
+    }
+    
+    .mat-mdc-input-element {
+      color: white !important;
+    }
+    
+    .mat-icon {
+      color: rgba(255, 255, 255, 0.7) !important;
+    }
   }
-  
-  .icon-prefix {
-    color: white;
-    font-size: 26px;
-    margin-right: 10px;
-  }
-  
-  .white {
-    color: #FFF;
-  }
-  
-  .app-title {
-    font-size: 20px;
-    color: white;
-    margin-bottom: 30px;
-  }
-  
-  .sign-up-message {
-    font-size:16px;
-    color:white;
-  }
-  
-  .error {
-    color: #f44336;
-  }
+}
