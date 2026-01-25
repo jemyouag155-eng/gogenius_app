@@ -12,10 +12,6 @@ public interface IUserRepository extends JpaRepository<User, String>{
     Optional<User> findByResetToken(String resetToken);
     Optional<User> findByLogin(String login);
 
-    @Query("""
-    SELECT u FROM User u 
-    WHERE LOWER(u.email) = LOWER(:input) 
-       OR LOWER(u.login) = LOWER(:input)
-    """)
-    Optional<User> findByEmailOrLoginIgnoreCase(@Param("input") String input);
+    @Query("SELECT u FROM User u WHERE LOWER(u.email) = LOWER(:input) OR LOWER(u.login) = LOWER(:input)")
+    User findByEmailOrLoginIgnoreCase(@Param("input") String input);
 }

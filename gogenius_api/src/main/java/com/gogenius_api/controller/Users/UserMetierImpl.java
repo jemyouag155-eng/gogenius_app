@@ -10,6 +10,7 @@ import com.gogenius_api.service.helpers.JwtService;
 import com.gogenius_api.service.helpers.TokenBlacklistService;
 import com.gogenius_api.helper.AuthException;
 import com.gogenius_api.helper.AuthException.ErrorType;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,10 +22,15 @@ import java.util.UUID;
 
 @Service
 public class UserMetierImpl implements IUserMetier{
+    @Autowired
     private IUserRepository userRepository;
+    @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
     private JwtService jwtService;
+    @Autowired
     private EmailService emailService;
+    @Autowired
     private TokenBlacklistService tokenBlacklistService;
 
     @Override
@@ -100,11 +106,10 @@ public class UserMetierImpl implements IUserMetier{
         }
 
         // Rechercher l'utilisateur
-        User user = userRepository.findByEmailOrLoginIgnoreCase(identifier)
-                .orElseThrow(() -> new AuthException(ErrorType.USER_NOT_FOUND, "Utilisateur non trouvé"));
+        User user = userRepository.findByEmailOrLoginIgnoreCase(identifier);
 
         // Vérifier le mot de passe
-        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+        if (request.getPassword().equals(user.getPassword())) {
             throw new AuthException(ErrorType.INVALID_CREDENTIALS, "Mot de passe incorrect");
         }
 

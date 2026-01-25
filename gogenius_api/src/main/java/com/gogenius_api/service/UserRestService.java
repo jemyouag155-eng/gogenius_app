@@ -14,6 +14,7 @@ import java.util.UUID;
 
 import com.gogenius_api.controller.Users.IUserMetier;
 import com.gogenius_api.helper.AuthException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/v1")
 public class UserRestService {
 
+    @Autowired
     private IUserMetier userMetier;
 
 
