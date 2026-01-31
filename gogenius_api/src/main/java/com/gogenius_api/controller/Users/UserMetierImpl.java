@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -109,7 +110,7 @@ public class UserMetierImpl implements IUserMetier{
         User user = userRepository.findByEmailOrLoginIgnoreCase(identifier);
 
         // Vérifier le mot de passe
-        if (request.getPassword().equals(user.getPassword())) {
+        if (!request.getPassword().equals(user.getPassword())) {
             throw new AuthException(ErrorType.INVALID_CREDENTIALS, "Mot de passe incorrect");
         }
 
@@ -134,6 +135,18 @@ public class UserMetierImpl implements IUserMetier{
         responseData.put("user_id", user.getId());
         responseData.put("email", user.getEmail());
         responseData.put("login", user.getLogin());
+        String profileEncoded = Base64.getEncoder().encodeToString(user.getUserType().getBytes());
+        responseData.put("profile", profileEncoded);
+        String[] mots = user.getLastName().concat(" ").concat(user.getFirstName()).split(" ");
+        String initiales = "";
+
+        for (String mot : mots) {
+            if (!mot.isEmpty()) {
+                initiales += mot.toUpperCase().charAt(0);
+            }
+        }
+        responseData.put("prefix", initiales);
+        responseData.put("fullname", user.getLastName().concat(" ").concat(user.getFirstName()));
 
         return responseData;
     }

@@ -37,7 +37,7 @@ public class WebSecurity {
                         // Autoriser l'accès public au endpoint de login
                         .requestMatchers("/v1/signIn").permitAll()
                         // Autoriser explicitement les requêtes OPTIONS (Preflight)
-                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/**").permitAll()
                         // Tout le reste nécessite une authentification
                         .anyRequest().authenticated()
                 )
