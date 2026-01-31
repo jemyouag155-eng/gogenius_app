@@ -35,6 +35,7 @@ public class ReservationMetierImpl implements IReservationMetier {
     /**
      * Créer une nouvelle réservation
      */
+    @Override
     public ReservationResponse createReservation(String userId, CreateReservationRequest request) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
@@ -59,6 +60,7 @@ public class ReservationMetierImpl implements IReservationMetier {
     /**
      * Obtenir toutes les réservations d'un utilisateur
      */
+    @Override
     public List<ReservationResponse> getAllReservations(String userId) {
         return reservationRepository.findByUserIdOrderByCreatedAtDesc(userId)
                 .stream()
@@ -69,6 +71,7 @@ public class ReservationMetierImpl implements IReservationMetier {
     /**
      * Obtenir les réservations avec pagination
      */
+    @Override
     public Page<ReservationResponse> getReservationsPaginated(String userId, int page, int size, String sortBy, String sortDir) {
         Sort sort = sortDir.equalsIgnoreCase("asc")
                 ? Sort.by(sortBy).ascending()
@@ -82,6 +85,7 @@ public class ReservationMetierImpl implements IReservationMetier {
     /**
      * Obtenir les 3 dernières réservations (pour le dashboard)
      */
+    @Override
     public List<ReservationResponse> getLatestReservations(String userId) {
         return reservationRepository.findTop3ByUserIdOrderByCreatedAtDesc(userId)
                 .stream()
@@ -92,6 +96,7 @@ public class ReservationMetierImpl implements IReservationMetier {
     /**
      * Obtenir les réservations à venir
      */
+    @Override
     public List<ReservationResponse> getUpcomingReservations(String userId) {
         return reservationRepository.findUpcomingReservations(userId, LocalDate.now())
                 .stream()
@@ -102,6 +107,7 @@ public class ReservationMetierImpl implements IReservationMetier {
     /**
      * Obtenir les réservations passées
      */
+    @Override
     public List<ReservationResponse> getPastReservations(String userId) {
         return reservationRepository.findPastReservations(userId, LocalDate.now())
                 .stream()
@@ -112,6 +118,7 @@ public class ReservationMetierImpl implements IReservationMetier {
     /**
      * Obtenir une réservation par ID
      */
+    @Override
     public Optional<ReservationResponse> getReservationById(String userId, String reservationId) {
         return reservationRepository.findByIdAndUserId(reservationId, userId)
                 .map(this::mapToResponse);
@@ -120,6 +127,7 @@ public class ReservationMetierImpl implements IReservationMetier {
     /**
      * Obtenir une réservation par code de confirmation
      */
+    @Override
     public Optional<ReservationResponse> getReservationByCode(String confirmationCode) {
         return reservationRepository.findByConfirmationCode(confirmationCode)
                 .map(this::mapToResponse);
@@ -128,6 +136,7 @@ public class ReservationMetierImpl implements IReservationMetier {
     /**
      * Mettre à jour une réservation
      */
+    @Override
     public ReservationResponse updateReservation(String userId, String reservationId, UpdateReservationRequest request) {
         Reservation reservation = reservationRepository.findByIdAndUserId(reservationId, userId)
                 .orElseThrow(() -> new RuntimeException("Réservation non trouvée"));
@@ -171,6 +180,7 @@ public class ReservationMetierImpl implements IReservationMetier {
     /**
      * Annuler une réservation
      */
+    @Override
     public ReservationResponse cancelReservation(String userId, String reservationId, CancelReservationRequest request) {
         Reservation reservation = reservationRepository.findByIdAndUserId(reservationId, userId)
                 .orElseThrow(() -> new RuntimeException("Réservation non trouvée"));
@@ -196,6 +206,7 @@ public class ReservationMetierImpl implements IReservationMetier {
     /**
      * Confirmer une réservation (admin/partner)
      */
+    @Override
     public ReservationResponse confirmReservation(String reservationId) {
         Reservation reservation = reservationRepository.findById(reservationId)
                 .orElseThrow(() -> new RuntimeException("Réservation non trouvée"));
@@ -212,6 +223,7 @@ public class ReservationMetierImpl implements IReservationMetier {
     /**
      * Marquer une réservation comme terminée
      */
+    @Override
     public ReservationResponse completeReservation(String reservationId) {
         Reservation reservation = reservationRepository.findById(reservationId)
                 .orElseThrow(() -> new RuntimeException("Réservation non trouvée"));
@@ -228,6 +240,7 @@ public class ReservationMetierImpl implements IReservationMetier {
     /**
      * Supprimer une réservation
      */
+    @Override
     public void deleteReservation(String userId, String reservationId) {
         Reservation reservation = reservationRepository.findByIdAndUserId(reservationId, userId)
                 .orElseThrow(() -> new RuntimeException("Réservation non trouvée"));
@@ -237,6 +250,7 @@ public class ReservationMetierImpl implements IReservationMetier {
     /**
      * Obtenir les statistiques des réservations
      */
+    @Override
     public ReservationStatsResponse getReservationStats(String userId) {
         ReservationStatsResponse stats = new ReservationStatsResponse();
 
@@ -255,6 +269,7 @@ public class ReservationMetierImpl implements IReservationMetier {
     /**
      * Rechercher des réservations avec filtres
      */
+    @Override
     public Page<ReservationResponse> searchReservations(
             String userId,
             ReservationStatus status,
